@@ -1,0 +1,17 @@
+colab: False
+workspace: C:\workspace\fluxlib\fluxnet
+data_folder: output\fluxnet2015
+output_folder: output
+save_file_suffix: null
+time_tag: TIMESTAMP_START
+tag_format: "%Y%m%d%H%M"
+seed_size: 15000
+x_vars: 
+  - TA_ERA
+  - SW_IN_ERA
+  - LW_IN_ERA
+  - VPD_ERA
+y_vars:
+  - NEE_VUT_REF
+
+run_sites: AR-SLu
