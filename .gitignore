@@ -36,3 +36,7 @@ output/fluxnet2015/AR-Vir_ENF_LAT_-28.2395_LON_-56.1886.csv
 output/sites_info.yaml
 output/temp_ds_AR-SLu.pkl
 output/temp_ts_AR-SLu.pkl
+.ipynb_checkpoints/2_0_v1_create_ds-checkpoint.ipynb
+.ipynb_checkpoints/get_sunrise_set-checkpoint.ipynb
+__pycache__/fluxnet.cpython-37.pyc
+__pycache__/gapfill.cpython-37.pyc

@@ -7,9 +7,9 @@ from pysy.toolbox.utils import Yaml
 
 def main():
     # extract_data_frome_fluxdata()
-    preprocess("process.yaml")
+    gap_fill("gapfill_config.yaml")
 
-def preprocess(config_file):
+def gap_fill(config_file):
     candidate = Candidate(config_file)
     # candidate.preprocess()
     candidate.dispatch()

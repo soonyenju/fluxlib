@@ -1,5 +1,5 @@
 colab: False
-workspace: C:\workspace\fluxlib\fluxnet
+workspace: C:\workspace\fluxlib
 data_folder: output\fluxnet2015
 output_folder: output
 save_file_suffix: null

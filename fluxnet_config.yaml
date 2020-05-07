@@ -11,7 +11,7 @@ directories:
 
   # All directories are relative subdirs of workspace:
   # e.g.: C:/fluxnet
-  workspace: C:\workspace\fluxlib\fluxnet
+  workspace: C:\workspace\fluxlib
   # input data dirs:
   zipped_flux_folder: data
   meta_file: data/FLX_AA-Flx_BIF_LATEST.xlsx
