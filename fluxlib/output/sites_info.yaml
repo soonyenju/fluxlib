@@ -1,0 +1,14 @@
+AR-SLu:
+  IGBP: MF
+  LAT: '-33.4648'
+  LON: '-66.4598'
+  PATHS:
+  - C:/workspace/fluxlib/fluxnet/output/fluxdata/FLX_AR-SLu_FLUXNET2015_FULLSET_2009-2011_1-3/FLX_AR-SLu_FLUXNET2015_ERAI_HH_1989-2014_1-3.csv
+  - C:/workspace/fluxlib/fluxnet/output/fluxdata/FLX_AR-SLu_FLUXNET2015_FULLSET_2009-2011_1-3/FLX_AR-SLu_FLUXNET2015_FULLSET_HH_2009-2011_1-3.csv
+AR-Vir:
+  IGBP: ENF
+  LAT: '-28.2395'
+  LON: '-56.1886'
+  PATHS:
+  - C:/workspace/fluxlib/fluxnet/output/fluxdata/FLX_AR-Vir_FLUXNET2015_FULLSET_2009-2012_1-3/FLX_AR-Vir_FLUXNET2015_ERAI_HH_1989-2014_1-3.csv
+  - C:/workspace/fluxlib/fluxnet/output/fluxdata/FLX_AR-Vir_FLUXNET2015_FULLSET_2009-2012_1-3/FLX_AR-Vir_FLUXNET2015_FULLSET_HH_2009-2012_1-3.csv
