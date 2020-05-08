@@ -5,21 +5,21 @@
 # File Name: setup.py
 # Author: Songyan Zhu
 # Mail: sz394@exeter.ac.uk
-# Created Time:  2020-05-07
+# Created Time:  2020-05-08
 #############################################
 
 
 from setuptools import setup, find_packages
 
 setup(
-	name = "libnn",
-	version = "0.0.2",
-	keywords = ("resnet", "run nn"),
+	name = "fluxlib",
+	version = "0.0.1",
+	keywords = ("eddy covariance", "flux"),
 	description = "left blank",
 	long_description = "left blank",
 	license = "MIT Licence",
 
-	url="https://github.com/soonyenju/libnn",
+	url="https://github.com/soonyenju/fluxlib",
 	author = "Songyan Zhu",
 	author_email = "soonyenju@foxmail.com",
 
