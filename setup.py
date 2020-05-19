@@ -13,13 +13,13 @@ from setuptools import setup, find_packages
 
 setup(
 	name = "fluxlib",
-	version = "0.0.1",
+	version = "0.0.2",
 	keywords = ("eddy covariance", "flux"),
 	description = "left blank",
 	long_description = "left blank",
 	license = "MIT Licence",
 
-	url="https://github.com/soonyenju/fluxlib",
+	url = "https://github.com/soonyenju/fluxlib",
 	author = "Songyan Zhu",
 	author_email = "soonyenju@foxmail.com",
 

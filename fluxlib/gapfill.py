@@ -1,3 +1,6 @@
+# change log:
+# replace Fluxnet params in hash_col_names 
+
 # coding: utf-8
 import numpy as np
 import pandas as pd
@@ -435,6 +438,7 @@ class Candidate(object):
         # columns for hash embedding
         # Xs are variables to learn, y is the nee
         hash_col_names = ["TA_ERA", "SW_IN_ERA", "LW_IN_ERA", "VPD_ERA", "PA_ERA", "P_ERA", "WS_ERA"]
+        hash_col_names = self.config["x_vars"]
         X_train = df.loc[major_cluster_timestamp, hash_col_names]
         y_train = df.loc[major_cluster_timestamp, nee_col_name]
 
