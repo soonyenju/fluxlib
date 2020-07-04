@@ -1,0 +1,30 @@
+source:
+  C:\workspace\malaysia\extracted
+
+destination:
+  test: C:\workspace\repositories\fluxlib\data\fluxnet4rfr_test
+  apply: C:\workspace\repositories\fluxlib\data\fluxnet4rfr_apply
+  flux4mds: C:\workspace\repositories\fluxlib\data\fluxnet4mds
+  flux4mds_validation: C:\workspace\repositories\fluxlib\data\fluxnet4mds_csv_validate
+
+drivers:
+  - TA_ERA
+  - SW_IN_ERA
+#   - LW_IN_ERA
+  - VPD_ERA
+#   - PA_ERA
+#   - P_ERA
+#   - WS_ERA
+  - NEE_VUT_REF_QC
+
+flux:
+  - NEE_VUT_REF
+
+rg:
+  - SW_IN_ERA
+
+qc:
+  - NEE_VUT_REF_QC
+
+timestamp_format: 
+  "%Y%m%d%H%M"

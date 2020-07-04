@@ -1,0 +1,31 @@
+source:
+  C:\workspace\malaysia\data\Sabaju_gapfilled_Ustar_005.csv
+# Sebungan_gapfilled_Ustar_01
+# Sabaju_gapfilled_Ustar_005
+destination:
+  test: C:\workspace\repositories\fluxlib\data\malaysia4rfr_test
+  apply: C:\workspace\repositories\fluxlib\data\malaysia4rfr_apply
+  flux4mds: C:\workspace\repositories\fluxlib\data\malaysia4mds
+  flux4mds_validation: C:\workspace\repositories\fluxlib\data\malaysia4mds_csv_validate
+drivers:
+  - Rg_f
+  - Tair_f
+#   - Tsoil_f
+  - VPD_f
+#   - H_f
+#   - LE_f
+#   - Ustar
+#   - WTD_1_1_1
+flux:
+  - NEE
+rg:
+  - Rg_f
+bench_flux:
+  - NEE_f
+  - NEE_fall
+qc:
+  - qcNEE
+timestamp_name:
+  Timestamp
+timestamp_format:
+  "%Y-%m-%d %H:%M"

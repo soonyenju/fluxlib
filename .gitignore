@@ -40,3 +40,11 @@ output/temp_ts_AR-SLu.pkl
 .ipynb_checkpoints/get_sunrise_set-checkpoint.ipynb
 __pycache__/fluxnet.cpython-37.pyc
 __pycache__/gapfill.cpython-37.pyc
+*.csv
+*.txt
+*.ini
+*.ini
+*.ini
+*.pkl
+*.pyc
+*.bak

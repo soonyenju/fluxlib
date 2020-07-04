@@ -11,14 +11,19 @@ directories:
 
   # All directories are relative subdirs of workspace:
   # e.g.: C:/fluxnet
-  workspace: C:\workspace\fluxlib
+  # workspace: C:\workspace\fluxlib
+  workspace: D:\fluxnet_data
   # input data dirs:
   zipped_flux_folder: data
-  meta_file: data/FLX_AA-Flx_BIF_LATEST.xlsx
+  # meta_file: data/FLX_AA-Flx_BIF_LATEST.xlsx
+  meta_file: FLX_AA-Flx_BIF_LATEST.xlsx
   # output files
-  upzipped_folder: output/fluxdata
-  site_info: output/sites_info.yaml
-  savepath: output/fluxnet2015
+  # upzipped_folder: output/fluxdata
+  upzipped_folder: output
+  # site_info: output/sites_info.yaml
+  site_info: sites_info.yaml
+  # savepath: output/fluxnet2015
+  savepath: fluxnet2015
 params:
   # user specified flux sites
   site_name: null
@@ -33,6 +38,7 @@ params:
     - P_ERA
     - WS_ERA
     - NEE_VUT_REF
+    - NEE_VUT_REF_QC
     # - CO2_F_MDS
     # - P # precipitation
     # - WS # wind speed
