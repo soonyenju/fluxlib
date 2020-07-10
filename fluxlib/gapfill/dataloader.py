@@ -6,6 +6,14 @@ class Loader():
     def __init__(self, data_path):
         self.data_path = data_path
 
+    def __call__(self):
+        # load formatted flux data
+        df = pd.read_csv(self.data_path, index_col = 0)
+        df.index = df.index.map(
+            lambda x: datetime.strptime(x, r"%Y-%m-%d %H:%M:%S")
+        )
+        return df
+
     # load and format fluxnet EC data
     def load_fluxnet(self, specified_columns, timestamp_format):
         #----------------------------------------------
@@ -47,4 +55,21 @@ class Loader():
                 lambda x: datetime.strptime(x, timestamp_format)
             )
         )
+        return df
+
+    # load standardized format EC
+    def load_format(self, specified_columns, timestamp_format):
+        #----------------------------------------------
+        # load data
+        raw_df = pd.read_csv(self.data_path, index_col = 0)
+        raw_df = raw_df.replace(-9999, np.nan)
+        #-----------------------------------------------
+        # # set timestamp as index
+        raw_df.index = raw_df.index.map(
+            lambda x: datetime.strptime(str(x), timestamp_format)
+        )
+        # raw_df.index = pd.to_datetime(raw_df.index)
+        # extract specified columns
+        df = raw_df.loc[:, specified_columns]
+        #-----------------------------------------------
         return df

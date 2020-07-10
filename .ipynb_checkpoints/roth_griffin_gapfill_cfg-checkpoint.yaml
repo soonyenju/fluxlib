@@ -1,0 +1,7 @@
+source:
+    griffin: C:\workspace\malaysia\data\roth_griffin\griffin.csv
+    roth:
+        licor: C:\workspace\malaysia\data\roth_griffin\Roth_licor\Red_EddyPro_2017-2018.csv
+        lowcost_n: C:\workspace\malaysia\data\roth_griffin\Roth_lowcost\Roth_N.csv
+        lowcost_s: C:\workspace\malaysia\data\roth_griffin\Roth_lowcost\Roth_S.csv
+    

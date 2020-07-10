@@ -1,0 +1,25 @@
+source:
+  C:\workspace\repositories\fluxlib\data\formatted_griffin_roth
+
+destination:
+  test: C:\workspace\repositories\fluxlib\data\groth4rfr_test
+  apply: C:\workspace\repositories\fluxlib\data\groth4rfr_apply
+  flux4mds: C:\workspace\repositories\fluxlib\data\groth4mds
+  flux4mds_validation: C:\workspace\repositories\fluxlib\data\groth4mds_csv_validate
+
+drivers:
+  - Tair
+  - Rg
+  - VPD
+
+flux:
+  - NEE
+
+rg:
+  - Rg
+
+qc:
+  - qcNEE
+
+timestamp_format: 
+  "%d/%m/%Y %H:%M"

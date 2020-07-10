@@ -6,9 +6,17 @@ from scipy import stats
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import auc, accuracy_score, confusion_matrix, mean_squared_error
 
+def find_start(df, drivers, reverse_date = 10, limit = 10):
+    df = df.interpolate(limit = limit)
+    for count in range(len(df) - reverse_date * 48):
+        df_temp = df[drivers].iloc[count: count + reverse_date * 48]
+        if not np.isnan(np.sum(df_temp.values)):
+            break
+    return df.iloc[count::, :]
+
 class AuxFiller():
-    def __init__(self, pd_series, reverse_date = 10, seed = 42):
-        self.pd_series = pd_series
+    def __init__(self, pd_series, reverse_date = 10, seed = 42, limit = 10):
+        self.pd_series = pd_series.interpolate(limit = limit)
         self.reverse_length = np.int(reverse_date * 48)
         self.seed = seed
     
@@ -16,24 +24,32 @@ class AuxFiller():
         self.create_dataset()
         self.train()
         self.test()
-        self.apply()
+        filled = self.apply()
+        return filled
 
     def create_dataset(self):
+        self.skip_list = []
         column = self.pd_series.copy()
         for count in range(self.reverse_length):
             move = self.pd_series.values[0: -(count + 1), :]
             pad = np.ones([(count + 1), 1]) * np.nan
-            column[str(count).zfill(3)] = np.vstack([pad, move])
+            try:
+                column[str(count).zfill(3)] = np.vstack([pad, move])
+            except Exception as e:
+                self.skip_list.append(count)
+                print(e)
         dataset = column.dropna().values
         X = dataset[:, 1::]
         y = dataset[:, 0]
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, random_state = self.seed)
+        self.skip_list = np.array(self.skip_list)
 
-    def train(self):
+    def train(self, save_model = None):
         self.xgb_model = xgb.XGBRegressor(objective = "reg:squarederror", random_state = self.seed)
         self.xgb_model.fit(self.X_train, self.y_train)
-        with open("aux_fill_model.pkl", "wb") as f:
-            pickle.dump(self.xgb_model, f)
+        if save_model:
+            with open(save_model, "wb") as f:
+                pickle.dump(self.xgb_model, f)
 
     def test(self, savefile = "aux_fill_test"):
         y_pred = self.xgb_model.predict(self.X_test)
@@ -50,7 +66,7 @@ class AuxFiller():
 
         df.to_csv(savefile + f"_r2_{np.round(r2, 2)}_rmse_{np.round(rmse, 2)}.csv")
 
-    def apply(self, model_source = None, savefile = "aux_fill_apply.csv"):
+    def apply(self, model_source = None, savefile = None):
         # load model:
         if model_source:
             with open(model_source, "rb") as f:
@@ -72,6 +88,8 @@ class AuxFiller():
                 X = np.tile(X, reps)[0: self.reverse_length].reshape(1, -1)
             else:
                 X = df.iloc[idx - self.reverse_length: idx, :].values.reshape(1, -1)
+            if X.shape[1] != self.X_train.shape[1]:
+                X = X[:, np.setdiff1d(np.arange(X.shape[1]), self.skip_list)]
             pred_val = xgb_model.predict(X)[0]
             # print(df.iloc[idx, :])
             if (pred_val > maxv) or (pred_val < minv):
@@ -80,5 +98,8 @@ class AuxFiller():
                 else:
                     pred_val = df.iloc[0: idx + 1, :].interpolate().values[-1, 0]
             df.iloc[idx, :] = pred_val
-        df.to_csv(savefile)
+        if savefile:
+            df.to_csv(savefile)
+        else:
+            return df
             

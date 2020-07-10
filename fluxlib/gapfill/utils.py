@@ -1,5 +1,30 @@
 import sys
 import numpy as np
+from scitbx import Yaml
+
+def make_gap_pipeline(config_path, df, flux):
+    cfg = Yaml(config_path).load()
+    if not isinstance(flux, list):
+        flux = [flux]
+    series = df[flux]
+
+    np.random.seed(0)
+    pointers = np.arange(len(series))
+    samples = []
+    for gap in cfg["gaps"]:
+        # print(gap)
+        window_size = gap["window_size"]
+        p = cfg["tgr"] * gap["ratio"]
+        sample, pointers = make_gaps(pointers, window_size, p, series)
+        samples.extend(sample)
+
+    train_idxs = pointers
+    test_idxs = np.array(samples)
+    # remove NaNs in both train and test indices:
+    train_idxs = train_idxs[np.where(np.isfinite(series.iloc[train_idxs]))[0]]
+    test_idxs = test_idxs[np.where(np.isfinite(series.iloc[test_idxs]))[0]]
+
+    return train_idxs, test_idxs
 
 def make_gaps(pointers, window_size, rgap, series, rbak = 3, vtheta = 0.5):
     length = len(series)
