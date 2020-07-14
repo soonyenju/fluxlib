@@ -1,4 +1,0 @@
-
-
-class Partitioner(object):
-    pass
