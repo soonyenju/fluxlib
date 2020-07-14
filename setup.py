@@ -13,15 +13,15 @@ from setuptools import setup, find_packages
 
 setup(
 	name = "fluxlib",
-	version = "0.0.3",
-	keywords = ("eddy covariance", "flux"),
+	version = "0.0.4",
+	keywords = ("eddy covariance postprocessing, gapfilling and partitioning", "flux"),
 	description = "left blank",
 	long_description = "left blank",
 	license = "MIT Licence",
 
 	url = "https://github.com/soonyenju/fluxlib",
 	author = "Songyan Zhu",
-	author_email = "soonyenju@foxmail.com",
+	author_email = "sz394@exeter.ac.uk",
 
 	packages = find_packages(),
 	include_package_data = True,
