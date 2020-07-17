@@ -6,11 +6,11 @@ class Loader():
     def __init__(self, data_path):
         self.data_path = data_path
 
-    def __call__(self):
+    def __call__(self, timestamp_format = r"%Y-%m-%d %H:%M:%S"):
         # load formatted flux data
         df = pd.read_csv(self.data_path, index_col = 0)
         df.index = df.index.map(
-            lambda x: datetime.strptime(x, r"%Y-%m-%d %H:%M:%S")
+            lambda x: datetime.strptime(x, timestamp_format)
         )
         return df
 
