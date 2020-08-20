@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 setup(
 	name = "fluxlib",
-	version = "0.0.8",
+	version = "0.0.9",
 	keywords = ("eddy covariance postprocessing, gapfilling and partitioning", "flux"),
 	description = "left blank",
 	long_description = "left blank",
