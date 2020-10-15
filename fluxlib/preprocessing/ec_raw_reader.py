@@ -24,6 +24,7 @@ class Raw(object):
             "IEEE8": np.float64,
             "LONG": np.int32,
             "ULONG": np.uint32,
+            "FP2": np.float64,
         }
         # }
 

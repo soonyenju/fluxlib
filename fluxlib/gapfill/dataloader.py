@@ -10,7 +10,7 @@ class Loader():
         # load formatted flux data
         df = pd.read_csv(self.data_path, index_col = 0)
         df.index = df.index.map(
-            lambda x: datetime.strptime(x, timestamp_format)
+            lambda x: datetime.strptime(str(x), timestamp_format)
         )
         return df
 
