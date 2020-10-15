@@ -9,7 +9,7 @@ class Loader():
     def __call__(self, timestamp_format = r"%Y-%m-%d %H:%M:%S"):
         # load formatted flux data
         df = pd.read_csv(self.data_path, index_col = 0)
-        if df.index.name == "Datetime":
+        if (type(df.index[0]) == pd._libs.tslibs.timestamps.Timestamp):
             pass
         else:
             df.index = df.index.map(
