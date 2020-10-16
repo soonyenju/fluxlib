@@ -248,7 +248,7 @@ class GFiller():
         applied_df.index = df.index
         return result_df, applied_df
 
-    def save_mds_txt_(self, df, test_idxs, savefolder, savefile, flux = "NEE", driver_units = {}):
+    def save_mds_txt(self, df, test_idxs, savefolder, savefile, flux = "NEE", driver_units = {}):
         df.loc[df.index[test_idxs], flux] = -9999
         df["Year"] = df.index.map(
             lambda x: x.year
