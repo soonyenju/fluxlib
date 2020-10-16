@@ -248,7 +248,7 @@ class GFiller():
         applied_df.index = df.index
         return result_df, applied_df
 
-    def save_mds_txt(self, df, test_idxs, savefolder, savefile, flux = "NEE"):
+    def save_mds_txt_(self, df, test_idxs, savefolder, savefile, flux = "NEE", driver_units = {}):
         df.loc[df.index[test_idxs], flux] = -9999
         df["Year"] = df.index.map(
             lambda x: x.year
@@ -259,10 +259,16 @@ class GFiller():
         df["Hour"] = df.index.map(
             lambda x: x.minute / 60 + x.hour
         )
-
-        df = df[["Year", "DoY", "Hour", "NEE", "Rg", "Tair", "VPD"]]
+        
+        drivers = ["Year", "DoY", "Hour", "NEE", "Rg", "Tair", "VPD"]
+        units = ["-", "-", "-", "umolm-2s-1", "Wm-2", "degC", "hPa"]
+        if driver_units:
+            for (d, u) in driver_units.items():
+                drivers.append(d)
+                units.append(u)
+        df = df[drivers]
         df = df.reset_index(drop = True)
-        df.loc[-1] = ["-", "-", "-", "umolm-2s-1", "Wm-2", "degC", "hPa"]
+        df.loc[-1] = units
         df.index = df.index + 1  # shifting index
         df = df.sort_index()  # sorting by index
 
