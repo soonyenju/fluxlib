@@ -2,7 +2,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from scitbx import Yaml
+from scitbx import Yaml, create_all_parents
 from scipy import stats
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.model_selection import train_test_split
@@ -16,10 +16,10 @@ class GFiller():
     
     def __get_regr__(self):
         regr_name = self.cfg["regressor"]
-        if regr_name == "RFR":
+        if regr_name == "rfr":
             from sklearn.ensemble import RandomForestRegressor
             regr = RandomForestRegressor(**self.cfg["params"])
-        elif regr_name == "XGB":
+        elif regr_name == "xgb":
             from xgboost import XGBRegressor
             regr = XGBRegressor(**self.cfg["params"])
         elif regr_name == "GBR":
@@ -240,10 +240,46 @@ class GFiller():
         regr = self.train(self.regr, X_train, y_train)
         result_df, r2, rmse = self.test(regr, X_test, y_test)
         result_df.index = df.index[itest]
-        print(f"{sitename}, R2: {np.round(r2, 4)}, RMSE: {np.round(rmse, 4)}")
+        print(f"{sitename}, {np.round(r2, 4)}, {np.round(rmse, 4)}")
         ## result_df.to_csv("fff.csv")
         # applied_df, r2, rmse = filler.test_rfr(regr, X_apply, y_apply)
         # print(f"apply results=> r2:{np.round(r2, 4)}, rmse: {np.round(rmse, 4)}")
         applied_df = self.test(regr, X_apply, y_apply, stat = False)
         applied_df.index = df.index
         return result_df, applied_df
+
+    def save_mds_txt(self, df, test_idxs, savefolder, savefile, flux = "NEE", driver_units = {}):
+        df.loc[df.index[test_idxs], flux] = -9999
+        df["Year"] = df.index.map(
+            lambda x: x.year
+        )
+        df["DoY"] = df.index.map(
+            lambda x: np.int(x.strftime('%j'))
+        )
+        df["Hour"] = df.index.map(
+            lambda x: x.minute / 60 + x.hour
+        )
+        
+        drivers = ["Year", "DoY", "Hour", "NEE", "Rg", "Tair", "VPD"]
+        units = ["-", "-", "-", "umolm-2s-1", "Wm-2", "degC", "hPa"]
+        if driver_units:
+            for (d, u) in driver_units.items():
+                drivers.append(d)
+                units.append(u)
+        df = df[drivers]
+        df = df.reset_index(drop = True)
+        df.loc[-1] = units
+        df.index = df.index + 1  # shifting index
+        df = df.sort_index()  # sorting by index
+
+        savefolder = Path(savefolder)
+        create_all_parents(savefolder)
+
+        df = df.fillna(-9999.)
+
+        df.to_csv(
+            savefolder.joinpath(f"{savefile}_mds.txt"), 
+            index=None, 
+            sep='\t', 
+            mode='w'
+        )

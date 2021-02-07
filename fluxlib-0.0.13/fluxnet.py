@@ -117,6 +117,8 @@ class Fluxnet2015(object):
         fyaml = Yaml(site_info_dir)
         info = fyaml.load()
 
+        create_all_parents(savepath, flag = "d")
+
         if not site_names:
             site_names = list(info.keys())
 
@@ -145,7 +147,8 @@ class Fluxnet2015(object):
             except Exception as e:
                 print(e)
                 print(paths)
-            df = data[vars_req]
+            vars_req_temp = [v for v in vars_req if v in data.columns]
+            df = data[vars_req_temp]
             pbar(count, len(info.items()))
             item = {
                 "igbp": igbp,
@@ -154,13 +157,14 @@ class Fluxnet2015(object):
                 "values": df
             }
             records[site_name] = item
+            df.to_csv(savepath.joinpath(f'{site_name}_{igbp}_LAT_{lat}_LON_{lon}.csv'))
         if "." in savepath.stem:
             create_all_parents(savepath, flag = "f")
             with open(savepath, "wb") as f:
                 pickle.dump(records, f, protocol = pickle.HIGHEST_PROTOCOL)
             print(f"required records are exported to {savepath}...")
 
-        else:
-            create_all_parents(savepath, flag = "d")
-            for site_id, record in records.items():
-                record["values"].to_csv(savepath.joinpath(f'{site_id}_{record["igbp"]}_LAT_{record["lat"]}_LON_{record["lon"]}.csv'))
+        # else:
+        #     create_all_parents(savepath, flag = "d")
+        #     for site_id, record in records.items():
+        #         record["values"].to_csv(savepath.joinpath(f'{site_id}_{record["igbp"]}_LAT_{record["lat"]}_LON_{record["lon"]}.csv'))

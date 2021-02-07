@@ -17,11 +17,6 @@ drivers:
   - Tair
   - Rg
   - VPD
-  - Ustar
-  - LE
-  - H
-  - Tsoil
-  - WTD
 flux:
   - NEE
 rg:

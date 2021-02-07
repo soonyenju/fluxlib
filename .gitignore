@@ -68,3 +68,5 @@ analyze_result_of_artificial_gaps.ipynb
 .ipynb_checkpoints/fluxnet_artificial_gapfill-checkpoint.ipynb
 .ipynb_checkpoints/analyze_result_of_artificial_gaps-checkpoint.ipynb
 data/fluxnet_site_info/Fluxnet_site_DB_1530/data/fluxnet_mapbooks.tar/fluxnet_mapbooks.tar
+data/dryland/.RData
+data/

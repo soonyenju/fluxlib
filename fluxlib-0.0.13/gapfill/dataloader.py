@@ -7,7 +7,7 @@ class Loader():
         self.data_path = data_path
 
     def __call__(self, timestamp_format = r"%Y-%m-%d %H:%M:%S", nodata = None):
-        # load formatted csv data
+        # load formatted flux data
         df = pd.read_csv(self.data_path, index_col = 0)
         if (type(df.index[0]) == pd._libs.tslibs.timestamps.Timestamp):
             pass

@@ -1,0 +1,9 @@
+# scenario 1
+tgr: 0.25
+gaps:
+  - window_size: 1440 # 48 * 30
+    ratio: 0.5
+  - window_size: 336
+    ratio: 0.3
+  - window_size: 48
+    ratio: 0.2 

@@ -1,5 +1,5 @@
 regressor:
-  rfr
+  RFR
 params:
   max_depth: 20
   min_samples_leaf: 3

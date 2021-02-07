@@ -89,10 +89,7 @@ class Formatter():
 
 
         if not "." in self.cfg["time_format"]:
-            try:
-                df_raw.index = df_raw.index.astype(str)
-            except:
-                df_raw.index = df_raw.index.astype(np.int64).astype(str)
+            df_raw.index = df_raw.index.astype(np.int64).astype(str)
 
         df_raw.index = df_raw.index.map(
             lambda x: datetime.strptime(str(x), self.cfg["time_format"])

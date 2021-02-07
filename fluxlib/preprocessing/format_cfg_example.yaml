@@ -1,0 +1,104 @@
+# Griffin
+fluxdata:
+  source:
+    C:\workspace\malaysia\data\roth_griffin\griffin.csv
+  is_file:
+    true
+  index:
+    Timestamp
+  load_params:
+    Tair: Ta
+    Rg: s_Rn
+    VPD: VPD_Taw
+    NEE: Fc
+output:
+  folder:
+    C:\workspace\fmt_griffin
+time_format:
+  "%d/%m/%Y %H:%M"
+
+# # Sabaju
+# fluxdata:
+#   source:
+#     C:\workspace\malaysia\data\Sabaju_Gapfilled+Lasslop_Partitioning.csv
+#   is_file:
+#     true
+#   index:
+#     YmdHM
+#   skiprows: 1
+#   load_params:
+#     Tair: Tair_f
+#     Rg: Rg_f
+#     VPD: VPD_f
+#     NEE: NEE
+#     qcNEE: qcNEE
+# output:
+#   folder:
+#     C:\workspace\fmt_sabaju
+# time_format:
+#   "%Y-%m-%d %H:%M"
+
+# # Rothamsted lowcost
+# fluxdata:
+#   source:
+#     C:\workspace\malaysia\data\roth_griffin\Roth_lowcost
+#   is_file:
+#     false
+#   index: Date/Time
+#   load_params:
+#     NEE: Fc
+
+# output:
+#   folder:
+#     C:\workspace\fmt_roth_lowcost
+
+# time_format:
+#   "%d/%m/%y %H:%M:%S"
+
+# # Rothamsted LiCOR
+# fluxdata:
+#   source: 
+#     C:\workspace\malaysia\data\roth_griffin\Roth_licor\Red_EddyPro_2017-2018.csv
+#   is_file:
+#     true
+#   index:
+#     Datetime
+#   load_params:
+#     Tair: air_temperature
+#     VPD: VPD
+#     NEE: co2_flux
+#     qcNEE: qc_co2_flux
+# ERA5: 
+#   path: C:\workspace\malaysia\data\roth_griffin\roth_era5_rad.nc
+#   params:
+#     - ssr
+#     # - aluvd
+
+# output:
+#   folder:
+#     C:\workspace\fmt_roth
+
+# time_format:
+#   "%Y-%m-%d %H:%M:%S"
+
+# # # Fluxnet
+# fluxdata:
+#   source: 
+#     C:\workspace\malaysia\extracted
+#   is_file:
+#     false
+#   index:
+#     TIMESTAMP_START
+#   load_params:
+#     Tair: TA_ERA
+#     Rg: SW_IN_ERA
+#     VPD: VPD_ERA
+#     NEE: NEE_VUT_REF
+#     qcNEE: NEE_VUT_REF_QC
+
+# output:
+#   folder:
+#     C:\workspace\fmt_fluxnet
+
+# time_format:
+#   "%Y%m%d%H%M"

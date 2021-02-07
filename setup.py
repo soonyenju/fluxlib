@@ -13,10 +13,10 @@ from setuptools import setup, find_packages
 
 setup(
 	name = "fluxlib",
-	version = "0.0.13",
-	keywords = ("eddy covariance postprocessing, gapfilling and partitioning", "flux"),
-	description = "left blank",
-	long_description = "left blank",
+	version = "0.0.14",
+	keywords = ("eddy covariance", "flux", "gap-filling"),
+	description = "fluxlib is a package for eddy covariance post-processing",
+	long_description = "Three parts: 1) fluxnet2015 dataset processing; 2) gap-filling; 3) partitioning refferred to Hesseflux please",
 	license = "MIT Licence",
 
 	url = "https://github.com/soonyenju/fluxlib",
