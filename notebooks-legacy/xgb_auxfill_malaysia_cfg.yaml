@@ -1,8 +1,0 @@
-source:
-  C:\workspace\malaysia\data\Sebungan_gapfilled_Ustar_01.csv
-drivers:
-  - Rg
-timestamp_name:
-  Timestamp
-timestamp_format:
-  "%Y-%m-%d %H:%M"
