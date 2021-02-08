@@ -22,7 +22,7 @@
 *.kmz
 *.html
 data/
-data_/
+data/
 output/
 notebooks-legacy/
-notebooks-legacy_/
+notebooks-legacy/
