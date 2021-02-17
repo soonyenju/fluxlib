@@ -1,187 +1,76 @@
-import sys, os
 import numpy as np
 import pandas as pd
-import xarray as xr
 from datetime import datetime
-from scitbx import Yaml, create_all_parents
-from pathlib import Path
 
 class Formatter():
-    def __init__(self, config_path, verbose = 1, undef_qcNEE = 0, tolerant = 0):
-        self.cfg = Yaml(config_path).load()
-        self.verbose = verbose
-        self.undef_qcNEE = undef_qcNEE
-        self.tolerant = tolerant
-
-    def __call__(self, handle = "skip", start_count = 0):
-        source = Path(self.cfg["fluxdata"]["source"])
-        if self.cfg["fluxdata"]["is_file"]:
-            source = [source]
+    def __init__(self, p, skiprows = None, nodata = None):
+        self.skiprows = skiprows
+        self.nodata = nodata
+        self._df = self.load_csv(p)
+        
+    def __call__(self, index_col = 0, fmt = "%Y-%m-%d %H:%M:%S", renames = {}):
+        if hasattr(self, "df"):
+            df = self.df.copy()
         else:
-            source = source.glob("*.csv")
-        for count, src in enumerate(source):
-            if count < start_count: continue
-            self.name = src.stem
-            print(self.name)
-            try:
-                df_flux = self.load_fluxdata(src, undef_qcNEE = self.undef_qcNEE)
-            except Exception as e:
-                # if self.verbose == 1:
-                #     print(e)
-                # elif self.verbose == 2:
-                #     exc_type, exc_obj, exc_tb = sys.exc_info()
-                #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                #     print(
-                #         f'''
-                #         Error type: {exc_type},
-                #         Fname: {fname},
-                #         Error line: {exc_tb.tb_lineno},
-                #         Error content: {e}
-                #         '''
-                #     )
-                if handle == "skip":
-                    continue
-                else:
-                    raise Exception(e)
-                    sys.exit(f"Error: {e}")
-            if "ERA5" in self.cfg:
-                met = self.load_era5(self.cfg["ERA5"]["path"], *self.cfg["ERA5"]["params"])
-                if "ssr" in self.cfg["ERA5"]["params"]:
-                    met = self.ssr2rg(met)
-                # insert ERA5 into fluxdata
-                df_met = met.loc[df_flux.index, :]
-                df_flux = pd.concat([df_flux, df_met], axis = 1)
-            self.save_csv(df_flux)
-            try:
-                self.save_mds_txt(df_flux)
-            except KeyError as e:
-                print(e)
-        # return df_flux
-
-    def load_fluxdata(self, src, undef_qcNEE = 0): 
-        if "skiprows" in list(self.cfg["fluxdata"].keys()):
-            skiprows = [self.cfg["fluxdata"]["skiprows"]]
-        else:
-            skiprows = None
-        try:
-            df_raw = pd.read_csv(src, skiprows = skiprows)
-            if self.cfg["fluxdata"]["index"] == "YmdHM":
-                df_raw["YmdHM"] = df_raw["Year"].map(str) + "-" + \
-                    df_raw["Month"].map(str) + "-" + \
-                    df_raw["Day"].map(str) + " " + \
-                    df_raw["Hour"].map(str) + ":" + \
-                    df_raw["Minute"].map(str)
-            elif self.cfg["fluxdata"]["index"] == "YjHM":
-                pass
-            df_raw = df_raw.set_index(
-                df_raw[self.cfg["fluxdata"]["index"]]#.astype(str),
-            )
-            df_raw = df_raw.drop(self.cfg["fluxdata"]["index"], axis = 1)
-        except Exception as e:
-            # print(e)
-            df_raw = pd.read_csv(src, index_col = 0, skiprows = skiprows)
-        if "Unnamed: 0" in df_raw.columns:
-            df_raw = df_raw.drop("Unnamed: 0", axis = 1)
-        df_raw.index.name = "Datetime"
-        # print(df_raw)
-
-        df_raw.columns = df_raw.columns.str.strip()
-
-
-        if not "." in self.cfg["time_format"]:
-            try:
-                df_raw.index = df_raw.index.astype(str)
-            except:
-                df_raw.index = df_raw.index.astype(np.int64).astype(str)
-
-        df_raw.index = df_raw.index.map(
-            lambda x: datetime.strptime(str(x), self.cfg["time_format"])
+            df = self._df.copy()
+        if not isinstance(index_col, str):
+            index_col = df.columns[int(index_col)]
+        df = df.set_index(index_col, drop = True)
+        df.index = df.index.map(
+            lambda x: datetime.strptime(x, fmt)
         )
-        df_raw = df_raw.drop_duplicates()
-        df_raw = df_raw.replace(-9999, np.nan)
-
-        # set default qcNEE if there is none.
-        if not "qcNEE" in list(self.cfg["fluxdata"]["load_params"].keys()):
-            df_raw["qcNEE"] = undef_qcNEE
-            df = df_raw[
-                list(
-                    self.cfg["fluxdata"]["load_params"].values()
-                    ) + ["qcNEE"]
-                ]
-        else:
-            if self.tolerant:
-                df = df_raw[list(set(df_raw.columns.tolist()).intersection(list(self.cfg["fluxdata"]["load_params"].values())))]
-                if self.verbose:
-                    print("Warning: wariables are not all contained!")
-            else:
-                df = df_raw[list(self.cfg["fluxdata"]["load_params"].values())]
-        del(df_raw)
-        return df.rename(columns = {
-            value:key for key, value in self.cfg["fluxdata"]["load_params"].items()
-        })
-    
-    def save_csv(self, df, savefolder = None, savefile = None):
-        if not savefile:
-            savefile = self.name
-        if not savefolder:
-            savefolder = Path(self.cfg["output"]["folder"])
-        else:
-            savefolder = Path(savefolder)
-        create_all_parents(savefolder)
-        df.to_csv(Path(savefolder).joinpath(f"{savefile}_fmt.csv"))
-
-    def save_mds_txt(self, df, savefolder = None, savefile = None):
-        df["Year"] = df.index.map(
-            lambda x: x.year
-        )
-        df["DoY"] = df.index.map(
-            lambda x: np.int(x.strftime('%j'))
-        )
-        df["Hour"] = df.index.map(
-            lambda x: x.minute / 60 + x.hour
-        )
-
-        df = df[["Year", "DoY", "Hour", "NEE", "Rg", "Tair", "VPD"]]
-        df = df.reset_index(drop = True)
-        df.loc[-1] = ["-", "-", "-", "umolm-2s-1", "Wm-2", "degC", "hPa"]
-        df.index = df.index + 1  # shifting index
-        df = df.sort_index()  # sorting by index
-
-        if not savefile:
-            savefile = self.name
-        if not savefolder:
-            savefolder = Path(self.cfg["output"]["folder"])
-        else:
-            savefolder = Path(savefolder)
-        create_all_parents(savefolder)
-
-        df = df.fillna(-9999.)
-
-        df.to_csv(
-            savefolder.joinpath(f"{savefile}_fmt.txt"), 
-            index=None, 
-            sep='\t', 
-            mode='w'
-        )
-
-    @classmethod
-    def load_era5(self, era5_path, *args, scale = "30T"):
-        with xr.open_dataset(era5_path) as ds:
-            df = ds.to_dataframe()
-            df.index = df.index.get_level_values("time")
-            # print(df.columns)
-        df = df[list(args)] # type(args): tuple
-        df = df.resample(scale).mean().bfill()
+        if renames:
+            df = df[list(renames.keys())]
+            df = df.rename(columns = renames)
         return df
 
-    @classmethod
-    def ssr2rg(self, df):
-        # J/m-2 to W/m-2
-        df["ssr"] = df["ssr"] / 3600
-        df = df.rename(
-            columns = {
-                "ssr": "Rg"
-            }
-        )
-        df[df["Rg"] < 0] = 0
+        @property
+        def df(self):
+            """
+            Pythonic getter
+            """
+            return self._df
+
+        @df.setter
+        def df(self, value):
+            """
+            Pythonic setter
+            """
+            self._df = value
+
+        @df.deleter
+        def df(self):
+            """
+            Pythonic deleter
+            """
+            del self._df
+        
+    def load_csv(self, p):
+        df = pd.read_csv(p, skiprows = self.skiprows)
+        df.columns = df.columns.str.strip()
+        if "Unnamed: 0" in df.columns:
+            df = df.drop("Unnamed: 0", axis = 1)
+        if self.nodata:
+            df = df.replace(self.nodata, np.nan)
+        return df
+
+    def customized_function(self, func, *args, **kwargs):
+        if hasattr(self, "df"):
+            df = self.df.copy()
+        else:
+            df = self._df.copy()
+        df = func(df, *args, **kwargs)
+        return df
+
+    def datetime_from_concat_rows(self):
+        # format YYYY-mm-dd HH:MM
+        if hasattr(self, "df"):
+            df = self.df.copy()
+        else:
+            df = self._df.copy()
+        df["datetime"] = df["Year"].map(str) + "-" + \
+            df["Month"].map(str) + "-" + \
+            df["Day"].map(str) + " " + \
+            df["Hour"].map(str) + ":" + \
+            df["Minute"].map(str)
         return df
