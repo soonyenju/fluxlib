@@ -3,34 +3,29 @@ import numpy as np
 from pathlib import Path
 from scitbx import Yaml, create_all_parents
 
-def make_gap_pipeline(config_path, df, flux, rbak = 3, vtheta = 0.5, seed = 0):
+def make_gap_pipeline(config_path, df, flux, rbak = 3, vtheta = 0.5):
     cfg = Yaml(config_path).load()
     if not isinstance(flux, list):
         flux = [flux]
     series = df[flux]
 
-    np.random.seed(seed)
+    np.random.seed(0)
     pointers = np.arange(len(series))
     samples = []
-    tags = []
-    for batch_cnt, gap in enumerate(cfg["gaps"]):
+    for gap in cfg["gaps"]:
         # print(gap)
         window_size = gap["window_size"]
         p = cfg["tgr"] * gap["ratio"]
         sample, pointers = make_gaps(pointers, window_size, p, series, rbak = rbak, vtheta = vtheta)
         samples.extend(sample)
-        tags.extend(list(np.ones(len(sample)) * batch_cnt))
 
     train_idxs = pointers
     test_idxs = np.array(samples)
-    tags = np.array(tags)
     # remove NaNs in both train and test indices:
     train_idxs = train_idxs[np.where(np.isfinite(series.iloc[train_idxs]))[0]]
-    valid_test_idxs_loc = np.where(np.isfinite(series.iloc[test_idxs]))[0]
-    test_idxs = test_idxs[valid_test_idxs_loc]
-    tags = tags[valid_test_idxs_loc]
+    test_idxs = test_idxs[np.where(np.isfinite(series.iloc[test_idxs]))[0]]
 
-    return train_idxs, test_idxs, tags
+    return train_idxs, test_idxs
 
 def make_gaps(pointers, window_size, rgap, series, rbak = 3, vtheta = 0.5):
     length = len(series)
