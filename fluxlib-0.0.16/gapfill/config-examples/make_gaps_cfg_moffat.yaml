@@ -1,0 +1,51 @@
+# # scenario 1
+# tgr: 0.25
+# gaps:
+#   - window_size: 1440 # 48 * 30
+#     ratio: 0.5
+#   - window_size: 336
+#     ratio: 0.3
+#   - window_size: 48
+#     ratio: 0.2 
+
+# # moffat scenarios
+# # scenario 1: very short gaps
+# tgr: 0.1
+# gaps:
+#   - window_size: 1
+#     ratio: 1.0
+# tag: "very_short"
+
+# # scenario 2: short gaps
+# tgr: 0.1
+# gaps:
+#   - window_size: 8
+#     ratio: 1.0
+# tag: "short"
+
+# # scenario 3: medium gaps
+# tgr: 0.1
+# gaps:
+#   - window_size: 64
+#     ratio: 1.0
+# tag: "medium"
+
+# # scenario 4: long gaps
+# tgr: 0.1
+# gaps:
+#   - window_size: 576
+#     ratio: 1.0
+# tag: "long"
+
+# scenario 5: mixed gaps
+tgr: 0.1
+gaps:
+  - window_size: 1
+    ratio: 0.25
+  - window_size: 8
+    ratio: 0.25
+  - window_size: 64
+    ratio: 0.25
+  - window_size: 576
+    ratio: 0.25
+tag: "mixed"
