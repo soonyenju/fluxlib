@@ -22,9 +22,6 @@ class GFiller():
         elif regr_name == "XGB":
             from xgboost import XGBRegressor
             regr = XGBRegressor(**self.cfg["params"])
-        elif regr_name == "DF21":
-            from deepforest import CascadeForestRegressor
-            regr = CascadeForestRegressor(**self.cfg["params"])
         elif regr_name == "GBR":
             from sklearn.ensemble import GradientBoostingRegressor
             regr = GradientBoostingRegressor(**self.cfg["params"])
@@ -163,37 +160,42 @@ class GFiller():
     @classmethod
     def train(self, regr, X_train, y_train):
         # print(regr)
-        regr.fit(X_train.values, y_train.values)
+        regr.fit(X_train, y_train)
         return regr
     #====================================================================================================
     # test regressor
     @classmethod
     def test(self, regr, X_test, y_test, stat = True):
-        predicts = regr.predict(X_test.values)
-        if predicts.ndim == 1:
-            predicts = predicts[:, np.newaxis]
+        predicts = regr.predict(X_test)[:, np.newaxis]
         df = pd.DataFrame(np.concatenate([y_test, predicts], axis = 1), columns = ["truth", "estimates"])
         if stat:
             slope, intercept, r_value, p_value, std_err = stats.linregress(df.dropna()["truth"], df.dropna()["estimates"])
             r2 = r_value**2
-            mse = mean_squared_error(df.dropna()["truth"], df.dropna()["estimates"])
+            mse = mean_squared_error(predicts, y_test)
             rmse = np.sqrt(mse)
-            bias = np.mean(df.dropna()["estimates"] - df.dropna()["truth"])
-            return df, r2, slope, rmse, bias
+            return df, r2, rmse
         else:
             return df
     #====================================================================================================
     # apply regressor
     @classmethod
-    def apply(self, regr, X_apply, df, flux):
-        predicts = regr.predict(X_apply.values)
-        if predicts.ndim == 1:
-            predicts = predicts[:, np.newaxis]
-
-        filled_name = flux[0] + "_filled" # assume flux is one element list, e.g. ["NEE"]
-        df[filled_name] = df[flux].copy()
-        df.loc[X_apply.index, filled_name] = predicts
-        return df[flux + [filled_name]]
+    def apply(self, regr, X_apply, df, flux, bench_flux):
+        predicts = regr.predict(X_apply)[:, np.newaxis]
+        bench_df = df.loc[X_apply.index, bench_flux]
+        #-----------------------------------------------------------
+        # create dataframe of true flux and predicts:
+        df = pd.DataFrame(
+            np.concatenate(
+                [df.loc[X_apply.index, flux].values, predicts], 
+                axis = 1
+            ), 
+            index = X_apply.index, 
+            columns = ["truth", "estimates"]
+        )
+        slope, intercept, r_value, p_value, std_err = stats.linregress(df.dropna()["truth"], df.dropna()["estimates"])
+        r2 = r_value**2
+        df = pd.concat([df, bench_df], axis = 1)
+        return df, r2
     #====================================================================================================
 
     def run_filling_pipeline(self, df, itrain = None, itest = None, sitename = "test_site"):
@@ -201,7 +203,6 @@ class GFiller():
         drivers = self.cfg["drivers"]
         flux = self.cfg["flux"]
         rg = self.cfg["rg"]
-        df = df[drivers + flux].copy()
         #-------------------------------------------------
         # set tags:
         df, stat_tags = self.set_stats(df, flux)
@@ -228,16 +229,21 @@ class GFiller():
             print("randomly split train & test")
             X_train, X_test, y_train, y_test = train_test_split(
                 X, y, 
-                test_size = 0.33, 
-                random_state = 42
+                test_size=0.33, 
+                random_state=42
             )
 
-        X_apply = df.loc[df[flux].isna().index, param_columns].interpolate().bfill()
+        X_apply = df[param_columns].interpolate(method = "pad")
+        y_apply = df[flux]#.interpolate(method = "pad")
         #--------------------------------------------------
         # train and test/apply RFR
         regr = self.train(self.regr, X_train, y_train)
-        result_df, r2, slope, rmse, bias = self.test(regr, X_test, y_test)
+        result_df, r2, rmse = self.test(regr, X_test, y_test)
         result_df.index = df.index[itest]
-        print(f"{sitename}, R2: {np.round(r2, 4)}, SLOPE: {np.round(slope, 4)}, RMSE: {np.round(rmse, 4)}, BIAS: {np.round(bias, 4)}")
-        applied_df = self.apply(self.regr, X_apply, df, flux)
+        print(f"{sitename}, R2: {np.round(r2, 4)}, RMSE: {np.round(rmse, 4)}")
+        ## result_df.to_csv("fff.csv")
+        # applied_df, r2, rmse = filler.test_rfr(regr, X_apply, y_apply)
+        # print(f"apply results=> r2:{np.round(r2, 4)}, rmse: {np.round(rmse, 4)}")
+        applied_df = self.test(regr, X_apply, y_apply, stat = False)
+        applied_df.index = df.index
         return result_df, applied_df
