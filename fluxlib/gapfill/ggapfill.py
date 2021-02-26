@@ -232,7 +232,7 @@ class GFiller():
                 random_state = 42
             )
 
-        X_apply = df.loc[df[flux[0]].isna().index, param_columns].interpolate().bfill()
+        X_apply = df.loc[df[flux].isna().values, param_columns].interpolate().bfill()
         #--------------------------------------------------
         # train and test/apply RFR
         regr = self.train(self.regr, X_train, y_train)
