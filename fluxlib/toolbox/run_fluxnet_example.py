@@ -1,5 +1,5 @@
 import pickle
-from fluxnet import Fluxnet2015
+from fluxlib import Fluxnet2015
 # from gapfill.gapfill_candi import Candidate
 from pathlib import Path
 import pandas as pd
