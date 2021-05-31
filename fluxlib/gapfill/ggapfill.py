@@ -241,3 +241,46 @@ class GFiller():
         print(f"{sitename}, R2: {np.round(r2, 4)}, SLOPE: {np.round(slope, 4)}, RMSE: {np.round(rmse, 4)}, BIAS: {np.round(bias, 4)}")
         applied_df = self.apply(self.regr, X_apply, df, flux)
         return result_df, applied_df
+
+    def run_filling_pipeline_apply(self, df, itrain = None, itest = None, sitename = "test_site"):
+        # itrain, itest: indices in df for training and testing, respectively
+        drivers = self.cfg["drivers"]
+        flux = self.cfg["flux"]
+        rg = self.cfg["rg"]
+        df = df[drivers + flux].copy()
+        #-------------------------------------------------
+        # set tags:
+        df, stat_tags = self.set_stats(df, flux)
+        df, season_tag = self.set_season_tag(df)
+        df, rg_tag = self.set_rg_tag(df, rg)
+        df, doy_year_tag = self.set_doy_year_tag(df)
+        #-------------------------------------------------
+        # prepare and split data for regressor
+        param_columns = drivers + stat_tags + season_tag + rg_tag + doy_year_tag
+        # X = df.dropna()[param_columns]
+        # y = df.dropna()[flux]
+        X = df[param_columns]
+        y = df[flux]
+        # # X_train, y_train, X_test, y_test are supposed to NOT contain any NaNs!
+        # X = X.interpolate(method = "pad")
+        # y = y.interpolate(method = "pad")
+        if (not itrain is None) & (not itest is None):
+            print("using input train & test")
+            X_train = X.iloc[itrain, :]
+            y_train = y.iloc[itrain]
+            X_test = X.iloc[itest, :]
+            y_test =y.iloc[itest]
+        else:
+            print("randomly split train & test")
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, 
+                test_size = 0.33, 
+                random_state = 42
+            )
+
+        X_apply = df.loc[df[flux].isna().values, param_columns].interpolate().bfill()
+        #--------------------------------------------------
+        # train and apply RFR
+        regr = self.train(self.regr, X_train, y_train)
+        applied_df = self.apply(regr, X_apply, df, flux)
+        return applied_df
