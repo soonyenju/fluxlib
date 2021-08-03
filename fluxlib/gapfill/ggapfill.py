@@ -240,7 +240,7 @@ class GFiller():
         result_df.index = df.index[itest]
         print(f"{sitename}, R2: {np.round(r2, 4)}, SLOPE: {np.round(slope, 4)}, RMSE: {np.round(rmse, 4)}, BIAS: {np.round(bias, 4)}")
         applied_df = self.apply(self.regr, X_apply, df, flux)
-        return result_df, applied_df
+        return result_df, applied_df, regr
 
     def run_filling_pipeline_apply(self, df, itrain = None, itest = None, sitename = "test_site"):
         # itrain, itest: indices in df for training and testing, respectively
@@ -283,4 +283,4 @@ class GFiller():
         # train and apply RFR
         regr = self.train(self.regr, X_train, y_train)
         applied_df = self.apply(regr, X_apply, df, flux)
-        return applied_df
+        return applied_df, regr
