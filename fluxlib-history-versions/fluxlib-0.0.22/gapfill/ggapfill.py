@@ -1,13 +1,11 @@
 import warnings
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from pathlib import Path
 from scitbx import Yaml
 from scipy import stats
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.model_selection import train_test_split
-from sklearn.inspection import permutation_importance
 
 class GFiller():
     def __init__(self, config_path, seed = 0):
@@ -109,11 +107,8 @@ class GFiller():
     #====================================================================================================
     # set season tag
     @classmethod
-    def set_season_tag(self, df, isnorth = True):
-        if isnorth:
-            df["season"] = (df.index.month%12 + 3) // 3 # print(seasons)
-        else:
-            df["season"] = ((df.index.month + 6)%12 + 3)//3
+    def set_season_tag(self, df):
+        df["season"] = (df.index.month%12 + 3) // 3 # print(seasons)
         return df, ["season"]
     #====================================================================================================
     # set radiance tag
@@ -200,54 +195,8 @@ class GFiller():
         df.loc[X_apply.index, filled_name] = predicts
         return df[flux + [filled_name]]
     #====================================================================================================
-    # # feature importances
-    # https://scikit-learn.org/stable/auto_examples/ensemble/plot_forest_importances.html
-    # https://scikit-learn.org/stable/modules/permutation_importance.html
-    @staticmethod
-    def permutation_feature_importance(regr, X_val, y_val, n_repeats = 30, random_state = 0):
-        r = permutation_importance(
-            regr, X_val, y_val,
-            n_repeats = n_repeats,
-            random_state = random_state
-        )
-        return r.importances_mean, r.importances_std
-    
-    @staticmethod
-    def impurity_feature_importance(regr):
-    
-        importances = regr.feature_importances_
 
-        std = np.std([tree.feature_importances_ for tree in regr.estimators_], axis=0)
-        return importances, std
-    
-    @staticmethod
-    def plot_importance(importances, std, feature_names):
-        forest_importances = pd.Series(importances, index=feature_names)
-
-        fig, ax = plt.subplots()
-        forest_importances.plot.bar(yerr=std, ax=ax)
-        ax.set_title("Feature importances using MDI")
-        ax.set_ylabel("Mean decrease in impurity")
-        fig.tight_layout()
-
-        return fig, ax
-    
-    @staticmethod
-    def print_importance(importances, std, feature_names):
-        """
-        # example for permutation_feature_importance
-        for i in r.importances_mean.argsort()[::-1]:
-           if r.importances_mean[i] - 2 * r.importances_std[i] > 0:
-               print(f"{feature_names[i]:<8}"
-                     f"{r.importances_mean[i]:.3f}"
-                     f" +/- {r.importances_std[i]:.3f}")    
-        """
-        for i in importances.argsort()[::-1]:
-            print(f"{feature_names[i]}: {importances[i]:.2f}+/-{std[i]:.2f}")
-
-    #====================================================================================================
-
-    def run_filling_pipeline(self, df, itrain = None, itest = None, sitename = "test_site", isnorth = True):
+    def run_filling_pipeline(self, df, itrain = None, itest = None, sitename = "test_site"):
         # itrain, itest: indices in df for training and testing, respectively
         drivers = self.cfg["drivers"]
         flux = self.cfg["flux"]
@@ -256,7 +205,7 @@ class GFiller():
         #-------------------------------------------------
         # set tags:
         df, stat_tags = self.set_stats(df, flux)
-        df, season_tag = self.set_season_tag(df, isnorth = isnorth)
+        df, season_tag = self.set_season_tag(df)
         df, rg_tag = self.set_rg_tag(df, rg)
         df, doy_year_tag = self.set_doy_year_tag(df)
         #-------------------------------------------------
@@ -291,17 +240,7 @@ class GFiller():
         result_df.index = df.index[itest]
         print(f"{sitename}, R2: {np.round(r2, 4)}, SLOPE: {np.round(slope, 4)}, RMSE: {np.round(rmse, 4)}, BIAS: {np.round(bias, 4)}")
         applied_df = self.apply(self.regr, X_apply, df, flux)
-        #--------------------------------------------------
-        # add attributes:
-        self.model = regr
-        self.dtrain = {"X": X_train, "y": y_train}
-        self.dtest = {"X": X_test, "y": y_test}
-        self.X_apply = X_apply
-        self.feature_names = param_columns
-        self.metrics = {"R2": r2, "SLOPE": slope, "RMSE": rmse, "BIAS": bias}
-        return result_df, applied_df
-    
-    #====================================================================================================
+        return result_df, applied_df, regr
 
     def run_filling_pipeline_apply(self, df, itrain = None, itest = None, sitename = "test_site"):
         # itrain, itest: indices in df for training and testing, respectively

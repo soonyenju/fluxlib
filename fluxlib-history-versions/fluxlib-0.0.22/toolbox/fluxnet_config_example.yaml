@@ -1,0 +1,76 @@
+directories:
+  # directory structure example:
+    # --|workspace
+    # ----|zipped_flux_folder
+    # ------|fluxnet sites
+    # ----|upzipped_folder
+    # ------|fluxnet sites
+    # ------|metadata
+    # ------|site info
+    # ------|extract fluxnet (pkl)
+
+  # All directories are relative subdirs of workspace:
+  # e.g.: C:/fluxnet
+  # workspace: C:\workspace\fluxlib
+  workspace: D:\fluxnet_data
+  # input data dirs:
+  zipped_flux_folder: data
+  # meta_file: data/FLX_AA-Flx_BIF_LATEST.xlsx
+  meta_file: FLX_AA-Flx_BIF_LATEST.xlsx
+  # output files
+  # upzipped_folder: output/fluxdata
+  upzipped_folder: output
+  # site_info: output/sites_info.yaml
+  site_info: sites_info.yaml
+  # savepath: output/fluxnet2015
+  savepath: fluxnet2015
+params:
+  # user specified flux sites
+  site_name: null
+  freq: HH
+  vars:
+    - TIMESTAMP_START
+    - TA_ERA
+    - SW_IN_ERA
+    - LW_IN_ERA
+    - VPD_ERA
+    - PA_ERA
+    - P_ERA
+    - WS_ERA
+    - NEE_VUT_REF
+    - NEE_VUT_REF_QC
+    # - CO2_F_MDS
+    # - P # precipitation
+    # - WS # wind speed
+    # - WD # wind direction
+    # - RH # relative humidity
+    # - TA_F_MDS # Air temperature, gapfilled using MDS method
+
+# to be continued...
+fluxnet_info:
+  data_proc_pipeline: https://fluxnet.fluxdata.org/data/fluxnet2015-dataset/data-processing/ 
+  pub: https://fluxnet.fluxdata.org/community/publications/
+  site_data_availability: https://fluxnet.fluxdata.org/data/data-availability/
+  site_map: https://fluxnet.fluxdata.org/sites/site-list-and-pages/?view=map
+  params:
+    url: https://fluxnet.fluxdata.org/data/fluxnet2015-dataset/fullset-data-product/
+    aux_file:
+      ERAI: Auxiliary data of downscaled micrometeorological variables using the ERA-Interim reanalysis data product.
+      AUXMETEO: Auxiliary data relate to the linear regression and error/correlation estimates for each data variable used in the downscaling.
+      AUXNEE: Auxiliary data product with variables resulting from the processing of NEE (mainly related to USTAR filtering) and generation of RECO and GPP.
+    vars:
+      TIMESTAMP: ISO timestamp
+      TA_F_MDS: Air temperature
+      CO2_F_MDS: CO2 mole fraction, gapfilled with MDS
+      CO2_F_MDS_QC: Quality flag for CO2_F_MDS
+      NEE_CUT_REF_RANDUNC: Random uncertainty for NEE_CUT_REF, from measured only data
+    long_run_sites:
+      BE-Bra: 96_14
+      BE-Lon: 04_14
+      BE-Vie: 04_14
+      NL-Hor: 04_11
+      NL-Loo: 96_14
+      FR-Gri: 04_14
+      FR-Fon: 05_14
+      DE-RuS: 11_14
+      DE-RuR: 11_14
