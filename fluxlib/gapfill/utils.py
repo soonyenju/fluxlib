@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import pandas as pd
 from pathlib import Path
 from scitbx import Yaml, create_all_parents
 
@@ -105,3 +106,6 @@ def save_mds_txt(df, test_idxs, savefolder, savefile, flux = "NEE", flux_unit = 
         sep='\t', 
         mode='w'
     )
+
+def load_mds_txt(p):
+    return pd.read_csv(p, sep=r"\t", header=0, skiprows = [1])
