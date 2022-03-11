@@ -6,3 +6,5 @@
 3. Format user flux data
 4. Gap filling
 5. GPP and respiration partitioning, using hesseflux.
+
+P.S. Do not use the default set_stats for filling gaps longer than one day.
