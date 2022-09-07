@@ -1,7 +1,7 @@
 import yaml
 from scitbx import Yaml
 
-def create_gapfill(df, flux, cfg_name, savefile = 'ggapfill.yaml'):
+def create_gapfill(df, flux, cfg_name, rg = 'SWIN', savefile = 'ggapfill.yaml'):
     if cfg_name == 'RFR':
         cfg = {
             'regressor': 'RFR',
@@ -66,7 +66,7 @@ def create_gapfill(df, flux, cfg_name, savefile = 'ggapfill.yaml'):
         'flux': [flux]
     })
     cfg.update({
-        'rg': ['PPFD']
+        'rg': [rg]
     })
 
     with open(savefile, 'w') as file:
