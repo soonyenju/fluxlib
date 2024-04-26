@@ -562,8 +562,8 @@ def _nee2gpp_reichstein(df, ff, isday, undef=-9999, nogppnight=False):
     # 1. each 5 days, in 15 day period, fit if range of T > 5
     locp = [] # local param
     locs = [] # local err
-    dmin = np.floor(np.amin(jul)).astype(np.int) # be aware that julian days starts at noon, i.e. 1.0 is 12h
-    dmax = np.ceil(np.amax(jul)).astype(np.int)  # so the search will be from noon to noon and thus includes all nights
+    dmin = np.floor(np.amin(jul)).astype(int) # be aware that julian days starts at noon, i.e. 1.0 is 12h
+    dmax = np.ceil(np.amax(jul)).astype(int)  # so the search will be from noon to noon and thus includes all nights
     for i in range(dmin,dmax,5):
         iii  = np.where((jul>=i) & (jul<(i+14)))[0]
         niii = iii.size
@@ -591,8 +591,8 @@ def _nee2gpp_reichstein(df, ff, isday, undef=-9999, nogppnight=False):
         # raise ValueError('Error _nee2gpp_reichstein: No local relationship found.')
         print('Warning _nee2gpp_reichstein: No local relationship found.')
         return dfout
-    locp   = np.squeeze(np.array(locp).astype(np.float))
-    locs   = np.squeeze(np.array(locs).astype(np.float))
+    locp   = np.squeeze(np.array(locp).astype(float))
+    locs   = np.squeeze(np.array(locs).astype(float))
     # 2. E0 = avg of best 3
     # Reichstein et al. (2005), p. 1430, 1st paragraph.
     with warnings.catch_warnings():
@@ -643,7 +643,7 @@ def _nee2gpp_reichstein(df, ff, isday, undef=-9999, nogppnight=False):
                                            args=(lloyd_only_rref_p, et[iii], net[iii]),
                                            approx_grad=True, disp=False)
             refp  += [p]
-            refii += [np.int((iii[0]+iii[-1])//2)]
+            refii += [int((iii[0]+iii[-1])//2)]
     if len(refp) == 0:
         # raise ValueError('Error _nee2gpp_reichstein: No ref relationship found.')
         print('Warning _nee2gpp_reichstein: No ref relationship found.')
@@ -827,7 +827,7 @@ def _nee2gpp_lasslop(df, ff, isday, undef=-9999, nogppnight=False):
     aalpha = 0.01
     qnet   = np.sort(dnet)
     nqnet  = qnet.size
-    abeta0 = np.abs(qnet[np.floor(0.97*nqnet).astype(np.int)]-qnet[np.ceil(0.03*nqnet).astype(np.int)])
+    abeta0 = np.abs(qnet[np.floor(0.97*nqnet).astype(int)]-qnet[np.ceil(0.03*nqnet).astype(int)])
     ak     = 0.
     # out
     lE0    = []
@@ -837,8 +837,8 @@ def _nee2gpp_lasslop(df, ff, isday, undef=-9999, nogppnight=False):
         lk     = []
     lRref  = []
     lii    = []
-    dmin = np.floor(np.amin(dates)).astype(np.int)
-    dmax = np.ceil(np.amax(dates)).astype(np.int)
+    dmin = np.floor(np.amin(dates)).astype(int)
+    dmax = np.ceil(np.amax(dates)).astype(int)
     zaehl = -1
     for i in range(dmin,dmax,2):
         good = True
@@ -904,7 +904,7 @@ def _nee2gpp_lasslop(df, ff, isday, undef=-9999, nogppnight=False):
                     lbeta0 = lbeta0 + [p[1]]
                     lk     = lk     + [p[2]]
                 lRref  = lRref  + [p[3]]
-                lii    = lii    + [np.int((iii[0]+iii[-1])/2)]
+                lii    = lii    + [int((iii[0]+iii[-1])/2)]
             else:
                 continue
         else:
