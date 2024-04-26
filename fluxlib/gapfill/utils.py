@@ -46,10 +46,10 @@ def make_gaps(pointers, window_size, rgap, series, rbak = 3, vtheta = 0.5):
     intersect = np.intersect1d(pointers, pointers - (window_size - 1))
 
     # gap number:
-    n_gap = np.int(length * rgap / window_size)
+    n_gap = int(length * rgap / window_size)
 
     # gap beginning points pool
-    anchors = np.random.choice(intersect, np.ceil(n_gap * rbak).astype(np.int))
+    anchors = np.random.choice(intersect, np.ceil(n_gap * rbak).astype(int))
 
     samples = []
     count = 0
@@ -77,7 +77,7 @@ def save_mds_txt(df, test_idxs, savefolder, savefile, flux = "NEE", flux_unit = 
         lambda x: x.year
     )
     df["DoY"] = df.index.map(
-        lambda x: np.int(x.strftime('%j'))
+        lambda x: int(x.strftime('%j'))
     )
     df["Hour"] = df.index.map(
         lambda x: x.minute / 60 + x.hour
