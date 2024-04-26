@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
-from scitbx import Yaml
+from scitbx.manage_yaml import Yaml
 from scipy import stats
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.model_selection import train_test_split
@@ -138,7 +138,7 @@ class GFiller():
     @classmethod
     def set_doy_year_tag(self, df):
         df["doy"] = df.index.map(
-            lambda x: np.int(x.strftime("%j"))
+            lambda x: int(x.strftime("%j"))
         )
         df["year"] = df.index.year
         return df, ["doy", "year"]
