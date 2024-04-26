@@ -82,7 +82,7 @@ Released under the MIT License; see LICENSE file for details.
 * Added Pi3=pi/3, R13VPDB, R18VSMOW, R2VSMOW, Mar 2015, Matthias Cuntz
 * Renamed heat capacities, molar masses, density of quartz, Mar 2015, Matthias Cuntz
 * Moved calculation of dielectric constant of water to own routine, Mar 2015, Matthias Cuntz
-* Added computational constants such as tiny=np.finfo(np.float).tiny, Nov 2016, Matthias Cuntz
+* Added computational constants such as tiny=np.finfo(float).tiny, Nov 2016, Matthias Cuntz
 * Added gas constants for dry air and water, May 2017, RL
 * Using numpy docstring format, May 2020, Matthias Cuntz
 * Added lowercase version of pi constants, May 2020, Matthias Cuntz
@@ -176,9 +176,9 @@ R18VSMOW = 2005.2e-6     # 18O isotope ratio of VSMOW
 R2VSMOW  = 155.76e-6     # 2H  isotope ratio of VSMOW
 
 # Computational
-eps  = np.finfo(np.float).eps
-huge = np.finfo(np.float).max
-tiny = np.finfo(np.float).tiny
+eps  = np.finfo(float).eps
+huge = np.finfo(float).max
+tiny = np.finfo(float).tiny
 
 
 if __name__ == '__main__':
