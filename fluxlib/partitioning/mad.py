@@ -78,7 +78,7 @@ def mad(datin, z=7, deriv=0, nozero=False):
     >>> import numpy as np
     >>> y = np.array([-0.25,0.68,0.94,1.15,2.26,2.35,2.37,2.40,2.47,2.54,2.62,
     ...               2.64,2.90,2.92,2.92,2.93,3.21,3.26,3.30,3.59,3.68,4.30,
-    ...               4.64,5.34,5.42,8.01],dtype=np.float)
+    ...               4.64,5.34,5.42,8.01],dtype=float)
 
     >>> # Normal MAD
     >>> print(mad(y))
@@ -290,7 +290,7 @@ if __name__ == '__main__':
     # import numpy as np
     # y = np.array([-0.25,0.68,0.94,1.15,2.26,2.35,2.37,2.40,2.47,2.54,2.62,
     #                2.64,2.90,2.92,2.92,2.93,3.21,3.26,3.30,3.59,3.68,4.30,
-    #                4.64,5.34,5.42,8.01],dtype=np.float)
+    #                4.64,5.34,5.42,8.01],dtype=float)
     # print(mad(y))
     # #[False False False False False False False False False False False False
     # # False False False False False False False False False False False False
