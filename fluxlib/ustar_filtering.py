@@ -296,7 +296,7 @@ def ustarfilter(dfin, flag=None, isday=None, date=None, timeformat='%Y-%m-%d %H:
 
                 # temperature classes
                 custars = []
-                ta_q     = np.quantile(ta_p, np.arange(ntaclasses+1,dtype=np.float)/np.float(ntaclasses))
+                ta_q     = np.quantile(ta_p, np.arange(ntaclasses+1,dtype=float)/float(ntaclasses))
                 ta_q[0] -= 0.1 # 1st include min
                 for t in range(ntaclasses):
                     iita    = (ta_p > ta_q[t]) & (ta_p <= ta_q[t+1])
@@ -310,7 +310,7 @@ def ustarfilter(dfin, flag=None, isday=None, date=None, timeformat='%Y-%m-%d %H:
                         continue
 
                     # ustar classes
-                    ustar_q     = np.quantile(ustar_t, np.arange(nustarclasses+1,dtype=np.float)/np.float(nustarclasses))
+                    ustar_q     = np.quantile(ustar_t, np.arange(nustarclasses+1,dtype=float)/float(nustarclasses))
                     ustar_q[0] -= 0.01 # 1st include min
                     for u in range(nustarclasses-1):
                         iiustar = (ustar_t > ustar_q[u]) & (ustar_t <= ustar_q[u+1])
