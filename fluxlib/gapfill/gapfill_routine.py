@@ -1,5 +1,5 @@
 import yaml
-from scitbx import Yaml
+from scitbx.manage_yaml import Yaml
 
 def create_gapfill(df, flux, cfg_name, rg = 'SWIN', savefile = 'ggapfill.yaml'):
     if cfg_name == 'RFR':
