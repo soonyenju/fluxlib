@@ -27,3 +27,4 @@ output/
 notebooks-legacy/
 notebooks-legacy/
 package-example/
+.DS_Store
